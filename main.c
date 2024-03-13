@@ -2,7 +2,7 @@
 #include <math.h>
 #include "fort.h"
 
-void listCreator (int propositions, int rows);
+//void listCreator (int propositions, int rows);
 
 int main(void)
 {
@@ -25,6 +25,7 @@ int main(void)
             else printf("|           |");
         }
         printf("\n");
+        for (int z = 1; z <= propositions; z++)
         for (int z = 1; z <= propositions; z++)
         {
             printf("%.*s", 15, "-------------");
