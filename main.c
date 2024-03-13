@@ -1,28 +1,48 @@
 #include <stdio.h>
 #include <math.h>
+#include "fort.h"
+
+void listCreator (int propositions, int rows);
 
 int main(void)
 {
 
-    int i, j, proposiciones, renglones;
+    int propositions, rows;
+    int propositionList[11] = {80,81,82,83,84,85,86,87,88,89,90}; //Chars de P a Z
+    //ft_table_t *table = ft_table_create();
+    //ft_set_cell_prop(table, 0, FT_ANY_COLUMN, FT_CPROP_ROW_TYPE, FT_ROW_HEADER);
 
     printf("¿Cuántas proposiciones vas a evaluar?: \n");
-    scanf("%d", &proposiciones);
+    scanf("%d", &propositions);
 
-    renglones = pow(2, proposiciones) + 1;
+    rows = pow(2, propositions) + 1;
 
-    for (j = 1; j <= renglones; j++)
+    for (int j = 1; j <= rows; j++)
     {
-        for (i = 1; i <= proposiciones; i++)
+        for (int i = 1; i <= propositions; i++)
         {
-            printf("|          |");
+            if (j == 1) printf("|%11c|",propositionList[i-1]);
+            else printf("|           |");
         }
         printf("\n");
-        for (int z = 1; z <= proposiciones; z++)
+        for (int z = 1; z <= propositions; z++)
         {
-            printf("------------");
+            printf("%.*s", 15, "-------------");
         }
         printf("\n");
     }
+
+    //listCreator(propositions,rows-1);
     return 0;
 }
+
+// void listCreator (int propositions, int rows){
+//     for (int i = 0; i < propositions; i++)
+//     {
+//         int x[rows];
+
+//         printf(x);
+//     }
+// }
+
+
