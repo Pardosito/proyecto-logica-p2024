@@ -1,24 +1,30 @@
-import pandas as pd
-from pandas import Series, DataFrame
-from tabulate import tabulate
+# import pandas as pd
+# from pandas import Series, DataFrame
+# from tabulate import tabulate
 
-#Pedimos al usuario la cantidad de proposiciones con las que trabajará
-totalPropositions = int(input("¿Cuántas proposiciones quiere evaluar?: "))
+# #Pedimos al usuario la cantidad de proposiciones con las que trabajará
+# totalPropositions = int(input("¿Cuántas proposiciones quiere evaluar?: "))
 
-Serie1 = Series([])
-totalRows = int(2**totalPropositions)
-totalColumns = Series(Series for i in range(totalPropositions))
+# Serie1 = Series([])
+# totalRows = int(2**totalPropositions)
+# totalColumns = Series(Series for i in range(totalPropositions))
 
-for i in totalColumns:
-    for j in range(totalRows):
-        y = " "
-        Serie1[i]._append(Series([y]))
+# # for i in totalColumns:
+# #     for j in range(totalRows):
+# #         y = "hola"
+# #         Serie1[i]._append(Series([y]))
 
-frame = {}
+# def createSeries(n):
+#     for i in range(totalPropositions):
+#         Serie[i] = Series([])
 
-for i in totalColumns:
-    frame[i] = Serie1[i]
+# frame = {}
 
-truthTable_DF = pd.DataFrame(frame)
+# for i in totalColumns:
+#     frame[i] = Serie1[i]
 
-print(tabulate(truthTable_DF, headers = "keys", tablefmt = "psql"))
+# truthTable_DF = pd.DataFrame(frame)
+
+# print(tabulate(truthTable_DF, headers = "keys", tablefmt = "psql"))
+
+print(8%5)
