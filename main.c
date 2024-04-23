@@ -33,3 +33,8 @@ getchar();
 
     return 0;
 }
+
+void  print_voard(proposition Main)
+{
+
+}
