@@ -1,0 +1,17 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/pardosito/Desktop/Kodiguito/Proyecto_Logica/main'
+relocations:
+  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x0, symBinAddr: 0x100002F00, symSize: 0xD4 }
+  - { offsetInCU: 0x4D, offset: 0x4D, size: 0x8, addend: 0x0, symName: _ret, symBinAddr: 0x100008000, symSize: 0x0 }
+  - { offsetInCU: 0x5D, offset: 0x5D, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x0, symBinAddr: 0x100002F00, symSize: 0xD4 }
+  - { offsetInCU: 0x87, offset: 0x87, size: 0x8, addend: 0x0, symName: _print_columns_propositions, symObjAddr: 0xD4, symBinAddr: 0x100002FD4, symSize: 0x224 }
+  - { offsetInCU: 0x11C, offset: 0x11C, size: 0x8, addend: 0x0, symName: _request_proposition, symObjAddr: 0x2F8, symBinAddr: 0x1000031F8, symSize: 0x3B8 }
+  - { offsetInCU: 0x1FE, offset: 0x1FE, size: 0x8, addend: 0x0, symName: _buscar_columna, symObjAddr: 0x6B0, symBinAddr: 0x1000035B0, symSize: 0xA0 }
+  - { offsetInCU: 0x251, offset: 0x251, size: 0x8, addend: 0x0, symName: _search_column, symObjAddr: 0x750, symBinAddr: 0x100003650, symSize: 0xA0 }
+  - { offsetInCU: 0x2A4, offset: 0x2A4, size: 0x8, addend: 0x0, symName: _conjunction, symObjAddr: 0x7F0, symBinAddr: 0x1000036F0, symSize: 0x180 }
+  - { offsetInCU: 0x313, offset: 0x313, size: 0x8, addend: 0x0, symName: _disjunction, symObjAddr: 0x970, symBinAddr: 0x100003870, symSize: 0x180 }
+  - { offsetInCU: 0x382, offset: 0x382, size: 0x8, addend: 0x0, symName: _implication, symObjAddr: 0xAF0, symBinAddr: 0x1000039F0, symSize: 0x180 }
+  - { offsetInCU: 0x3F1, offset: 0x3F1, size: 0x8, addend: 0x0, symName: _negation, symObjAddr: 0xC70, symBinAddr: 0x100003B70, symSize: 0x138 }
+  - { offsetInCU: 0x452, offset: 0x452, size: 0x8, addend: 0x0, symName: _print_table, symObjAddr: 0xDA8, symBinAddr: 0x100003CA8, symSize: 0xD8 }
+...
