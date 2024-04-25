@@ -22,8 +22,11 @@ typedef struct
     int columns;
     char board[100][100][50];
 } proposition;
+
 void print_columns_propositions(proposition Main);
 proposition request_proposition(proposition Main);
+
+
 int main()
 {
     proposition Main;
@@ -139,18 +142,14 @@ proposition negation(proposition Main, int col, int result_col)
 }
 void print_table(proposition Main)
 {
-    for (int i = 0; i < Main.rows; i++)
-    { // Loop through each row
-        for (int j = 0; j < Main.num_propositions; j++)
-        {                                       
-            if (i == 0)
+    for (int i_row = 0; i_row < Main.rows; i_row++)
+        {
+            for (int i_column = 0; i_column < Main.num_propositions; i_column++)
             {
-
+                printf("|%-11s",Main.board[i_row][i_column]);
             }
-            printf("|%-11s", Main.board[i][j]); // Print each string in the cell with padding for alignment
+            printf("\n");
         }
-        printf("|\n"); // New line after each row
-    }
 }
 
 proposition request_proposition(proposition Main)
@@ -163,15 +162,13 @@ proposition request_proposition(proposition Main)
         printf("enter the proposition %d: ", x);
         ret = scanf("%c", &Main.board[0][x][0]);
         getchar();
+        fflush(stdin);
     }
 
-    print_table(Main);
-
-    for (int x = 0; x < Main.rows; x++)
+    for (int x = 1; x < Main.rows; x++)
     {
         for (int y = 0; y < Main.num_propositions; y++)
         {
-            // if (y == 0) 
             if ((((x - 1) >> (Main.num_propositions - y - 1)) & 1) == 0) // Bitwise operation AND with number 1 to print the values of the propositions
             {
                 strcpy(Main.board[x][y],"True\0");
@@ -180,6 +177,8 @@ proposition request_proposition(proposition Main)
             {
                 strcpy(Main.board[x][y], "False\0");
             }
+            //printf("%s",Main.board[x][y]);
+            // printf("\n");
         }
     }
 
