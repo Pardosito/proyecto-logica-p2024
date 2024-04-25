@@ -49,8 +49,7 @@ void print_columns_propositions(proposition Main)
     {
         for (int i = 0; i < Main.num_propositions; i++)
         {
-            if (j == 0)
-                printf("|%-11c|", propositionList[i]);                        // If in row number 1 (Index 0), print characters (Header)
+            if (j == 0) printf("|%-11c|", propositionList[i]);                        // If in row number 1 (Index 0), print characters (Header)
             else if ((((j - 1) >> (Main.num_propositions - i - 1)) & 1) == 0) // Bitwise operation AND with number 1 to print the values of the propositions
             {
                 printf("|%-11s|", "V");
@@ -67,11 +66,11 @@ void print_columns_propositions(proposition Main)
     }
 }
 
-int search_column(proposition Main, const char *search)
+int search_column(proposition Main, int search)
 {
     for (int i = 0; i < 100; i++)
     {
-        if (strcmp(Main.board[0][i], search) == 0)
+        if (Main.board[0][i] == search)
         {
             return i;
         }
@@ -82,13 +81,13 @@ proposition conjunction(proposition Main, int col1, int col2, int result_col)
 {
     for (int i = 1; i < Main.rows; i++)
     {
-        if (strcmp(Main.board[col1][i], "true") == 0 && strcmp(Main.board[col2][i], "true") == 0)
+        if (strcmp(Main.board[col1][i], "true\0") == 0 && strcmp(Main.board[col2][i], "true\0") == 0)
         {
-            strcpy(Main.board[result_col][i], "true");
+            strcpy(Main.board[result_col][i], "true\0");
         }
         else
         {
-            strcpy(Main.board[result_col][i], "false");
+            strcpy(Main.board[result_col][i], "false\0");
         }
     }
     return Main;
@@ -143,8 +142,12 @@ void print_table(proposition Main)
     for (int i = 0; i < Main.rows; i++)
     { // Loop through each row
         for (int j = 0; j < Main.num_propositions; j++)
-        {                                       // Loop through each column
-            printf("|%-11s", Main.board[j][i]); // Print each string in the cell with padding for alignment
+        {                                       
+            if (i == 0)
+            {
+
+            }
+            printf("|%-11s", Main.board[i][j]); // Print each string in the cell with padding for alignment
         }
         printf("|\n"); // New line after each row
     }
@@ -154,43 +157,34 @@ proposition request_proposition(proposition Main)
 {
     int option;
     Main.rows = pow(2, Main.num_propositions) + 1;
-    int rows = pow(2, Main.num_propositions);
-    int half = rows / 2;
-    for (int x = 0; x < Main.num_propositions; x++)
-    {
-        int current_value = 0;
-        int counter = 0;
-        for (int y = 1; y <= Main.rows; y++)
-        {
-            if (counter < half && current_value == 0)
-            {
-                strcpy(Main.board[x][y], "false");
-                counter++;
-            }
-            if (counter >= half && current_value == 0)
-            {
-                counter = 0;
-                current_value = 1;
-            }
-            if (counter < half && current_value == 1)
-            {
-                strcpy(Main.board[x][y], "true");
-                counter++;
-            }
-            if (counter >= half && current_value == 1)
-            {
-                counter = 0;
-                current_value = 0;
-            }
-        }
-        half = half / 2;
-    }
+
     for (int x = 0; x < Main.num_propositions; x++)
     {
         printf("enter the proposition %d: ", x);
         ret = scanf("%c", &Main.board[0][x][0]);
         getchar();
     }
+
+    print_table(Main);
+
+    for (int x = 0; x < Main.rows; x++)
+    {
+        for (int y = 0; y < Main.num_propositions; y++)
+        {
+            // if (y == 0) 
+            if ((((x - 1) >> (Main.num_propositions - y - 1)) & 1) == 0) // Bitwise operation AND with number 1 to print the values of the propositions
+            {
+                strcpy(Main.board[x][y],"True\0");
+            }
+            else
+            {
+                strcpy(Main.board[x][y], "False\0");
+            }
+        }
+    }
+
+    print_table(Main);
+
     printf("Enter logical operations using the following symbols:\n"
            "1 - Negation (~), e.g., ~q\n"
            "2 - Conjunction (&), e.g., p & q\n"
@@ -202,11 +196,11 @@ proposition request_proposition(proposition Main)
 
     switch (option)
     {
-        char proposition;
+        int proposition, secondProposition;
     case 1:
         printf("Which proposition would you like to negate? ");
-        scanf("%c",&proposition);
-        if (search_column(Main,&proposition) == -1)
+        scanf("%d",&proposition);
+        if (search_column(Main,proposition) == -1)
         {
             printf("Hola");
         }
@@ -214,7 +208,13 @@ proposition request_proposition(proposition Main)
 
     case 2:
         printf("Enter the first proposition: ");
-        scanf("%c", &proposition);
+        scanf("%d", &proposition);
+        printf("Enter the second proposition: ");
+        scanf("%d", &secondProposition);
+
+        conjunction(Main, proposition, secondProposition, (Main.num_propositions + Main.columns));
+        print_table(Main);
+        break;
     
     default:
         break;
