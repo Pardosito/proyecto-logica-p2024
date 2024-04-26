@@ -23,7 +23,6 @@ typedef struct
     char board[100][100][50];
 } proposition;
 
-void print_columns_propositions(proposition Main);
 proposition request_proposition(proposition Main);
 
 int main()
@@ -38,18 +37,48 @@ int main()
     return 0;
 }
 
-char * search_column(proposition Main, char *search)
+int search_column(proposition Main, char *search)
 {
     for (int i = 0; i < 100; i++)
     {
-        if (strcmp(Main.board[0][i], search) == 0)
+        if (Main.board[0][i] == search)
         {
-            char* propositionFound = Main.board[0][i];
-            return propositionFound;
+            return i;
+            break;
         }
     }
-    return "error";
+    return -1;
 }
+
+// void compareStrings(char* x, char* y)
+// {
+//     int flag = 0;
+ 
+//     // Iterate a loop till the end
+//     // of both the strings
+//     while (*x != '\0' || *y != '\0') {
+//         if (*x == *y) {
+//             x++;
+//             y++;
+//         }
+ 
+//         // If two characters are not same
+//         // print the difference and exit
+//         else if ((*x == '\0' && *y != '\0')
+//                  || (*x != '\0' && *y == '\0')
+//                  || *x != *y) {
+//             flag = 1;
+//             printf("Unequal Strings\n");
+//             break;
+//         }
+//     }
+ 
+//     // If two strings are exactly same
+//     if (flag == 0) {
+//         printf("Equal Strings\n");
+//     }
+// }
+
 proposition conjunction(proposition Main, int col1, int col2, int result_col)
 {
     for (int i = 1; i < Main.rows; i++)
@@ -65,6 +94,7 @@ proposition conjunction(proposition Main, int col1, int col2, int result_col)
     }
     return Main;
 }
+
 proposition disjunction(proposition Main, int col1, int col2, int result_col)
 {
     for (int i = 1; i < Main.rows; i++)
@@ -80,6 +110,7 @@ proposition disjunction(proposition Main, int col1, int col2, int result_col)
     }
     return Main;
 }
+
 proposition implication(proposition Main, int col1, int col2, int result_col)
 {
     for (int i = 1; i < Main.rows; i++)
@@ -95,21 +126,23 @@ proposition implication(proposition Main, int col1, int col2, int result_col)
     }
     return Main;
 }
+
 proposition negation(proposition Main, int col, int result_col)
 {
     for (int i = 1; i < Main.rows; i++)
     {
-        if (strcmp(Main.board[col][i], "true") == 0)
+        if (strcmp(Main.board[i][col], "true") == 0)
         {
-            strcpy(Main.board[result_col][i], "false");
+            strcpy(Main.board[i][result_col], "false");
         }
         else
         {
-            strcpy(Main.board[result_col][i], "true");
+            strcpy(Main.board[i][result_col], "true");
         }
     }
     return Main;
 }
+
 void print_table(proposition Main)
 {
     for (int i_row = 0; i_row < Main.rows; i_row++)
@@ -169,24 +202,32 @@ proposition request_proposition(proposition Main)
             char proposition, secondProposition;
         case 1:
             printf("Which proposition would you like to negate? ");
+            fflush(stdin);
             scanf("%c", &proposition);
-            if (strcmp(search_column(Main, &proposition), "error\0") != 0 )
+            getchar();
+
+            int returnedColumnIndex = search_column(Main, &proposition);
+            printf("%d", returnedColumnIndex);
+            
+            if (returnedColumnIndex != -1)
             {
-                printf("Proposition not found.");
+                negation(Main, returnedColumnIndex, (Main.columns + 1));
+                Main.columns += 1;
+                print_table(Main);
             }
             else
             {
-                negation(Main, search_column(Main, &proposition), (Main.columns + 1));
-                Main.columns += 1;
-                print_table(Main);
+                printf("Proposition not found.\n");
             }
             break;
 
         case 2:
             printf("Enter the first proposition: ");
             scanf("%c", &proposition);
+            getchar();
             printf("Enter the second proposition: ");
             scanf("%c", &secondProposition);
+            getchar();
 
             conjunction(Main, proposition, secondProposition, (Main.columns + 1));
             print_table(Main);
@@ -196,13 +237,13 @@ proposition request_proposition(proposition Main)
             break;
         }
 
-            printf("Enter logical operations using the following symbols:\n"
-           "1 - Negation (~), e.g., ~q\n"
-           "2 - Conjunction (&), e.g., p & q\n"
-           "3 - Disjunction (|), e.g., p | q\n"
-           "4 - Implication (->), e.g., p -> q\n"
-           "Type '0' to finish entering your prepositions\n");
+        printf("Enter logical operations using the following symbols:\n"
+               "1 - Negation (~), e.g., ~q\n"
+               "2 - Conjunction (&), e.g., p & q\n"
+               "3 - Disjunction (|), e.g., p | q\n"
+               "4 - Implication (->), e.g., p -> q\n"
+               "Type '0' to finish entering your prepositions\n");
 
-    scanf("%d", &option);
+        scanf("%d", &option);
     }
 }
