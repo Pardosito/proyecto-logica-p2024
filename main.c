@@ -55,13 +55,13 @@ proposition conjunction(proposition Main, int col1, int col2, int result_col)
 {
     for (int i = 1; i < Main.rows; i++)
     {
-        if (strcmp(Main.board[col1][i], "true\0") == 0 && strcmp(Main.board[col2][i], "true\0") == 0)
+        if (strcmp(Main.board[i][col1], "True") == 0 && strcmp(Main.board[i][col2], "True") == 0)
         {
-            strcpy(Main.board[result_col][i], "true\0");
+            strcpy(Main.board[i][result_col], "True");
         }
         else
         {
-            strcpy(Main.board[result_col][i], "false\0");
+            strcpy(Main.board[i][result_col], "False");
         }
     }
     return Main;
@@ -71,13 +71,13 @@ proposition disjunction(proposition Main, int col1, int col2, int result_col)
 {
     for (int i = 1; i < Main.rows; i++)
     {
-        if (strcmp(Main.board[col1][i], "true\0") == 0 || strcmp(Main.board[col2][i], "true\0") == 0)
+        if (strcmp(Main.board[i][col1], "True") == 0 || strcmp(Main.board[i][col2], "True") == 0)
         {
-            strcpy(Main.board[result_col][i], "true\0");
+            strcpy(Main.board[i][result_col], "True");
         }
         else
         {
-            strcpy(Main.board[result_col][i], "false\0");
+            strcpy(Main.board[i][result_col], "False");
         }
     }
     return Main;
@@ -117,7 +117,6 @@ proposition negation(proposition Main, int col, int result_col)
         }
     }
     return Main;
-
 }
 
 void print_table(proposition Main)
@@ -176,13 +175,13 @@ void request_proposition(proposition Main)
     {
         switch (option)
         {
-            char userProposition, secondProposition;
+            char userProposition[2], secondProposition[2];
 
         case 1:
             printf("Which proposition would you like to negate? ");
             fflush(stdin);
-            gets(&userProposition);
-            int returnedColumnIndex = search_column(Main, &userProposition);
+            fgets(userProposition, 2, stdin);
+            int returnedColumnIndex = search_column(Main, userProposition);
 
             if (returnedColumnIndex != -1)
             {
@@ -197,17 +196,53 @@ void request_proposition(proposition Main)
             }
             break;
 
-        case 2:
-            printf("Enter the first proposition: ");
-            scanf("%c", &userProposition);
-            getchar();
-            printf("Enter the second proposition: ");
-            scanf("%c", &secondProposition);
-            getchar();
 
-            conjunction(Main, userProposition, secondProposition, Main.columns);
-            print_table(Main);
+        case 2:
+            fflush(stdin);
+            printf("Enter the first proposition: ");
+            fgets(userProposition, 2, stdin);
+            int firstReturnedColumnIndex = search_column(Main, userProposition);
+
+            fflush(stdin);
+            printf("Enter the second proposition: ");
+            fgets(secondProposition, 2, stdin);
+            int secondReturnedColumnIndex = search_column(Main, secondProposition);
+
+            if (firstReturnedColumnIndex != -1 && secondReturnedColumnIndex != -1)
+            {
+                Main = conjunction(Main, firstReturnedColumnIndex, secondReturnedColumnIndex, Main.columns);
+                Main.columns += 1;
+                print_table(Main);
+            }
+            else
+            {
+                printf("Propositions not found.\n");
+            }
             break;
+
+
+            case 3:
+                fflush(stdin);
+                printf("Enter the first proposition: ");
+                fgets(userProposition, 2, stdin);
+                int firstReturnedColumnIndexCONJ = search_column(Main, userProposition);
+
+                fflush(stdin);
+                printf("Enter the second proposition: ");
+                fgets(secondProposition, 2, stdin);
+                int secondReturnedColumnIndexCONJ = search_column(Main, secondProposition);
+
+                if (firstReturnedColumnIndexCONJ != -1 && secondReturnedColumnIndexCONJ != -1)
+                {
+                    Main = disjunction(Main, firstReturnedColumnIndexCONJ, secondReturnedColumnIndexCONJ, Main.columns);
+                    Main.columns += 1;
+                    print_table(Main);
+                }
+                else
+                {
+                    printf("Propositions not found.\n");
+                }
+                break;              
 
         default:
             break;
