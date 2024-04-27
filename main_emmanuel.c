@@ -94,7 +94,6 @@ void request_proposition(proposition *Main) {
     while (option != 0) {
         char userProposition[50], secondProposition[50], operation[3];
         int returnedColumnIndex, secondReturnedColumnIndex;
-        printf("Enter the operation number: ");
         switch (option) {
             case 1:
                 printf("Which proposition would you like to negate? ");
