@@ -10,6 +10,8 @@ typedef struct {
 } proposition;
 
 void request_proposition(proposition *Main);
+int search_column(proposition *Main, char *search);
+proposition operate(proposition Main, char *operation, int col1, int col2, int result_col);
 
 int main(void) {
     proposition Main;
@@ -18,7 +20,6 @@ int main(void) {
     getchar();
     Main.columns = Main.num_propositions;
     request_proposition(&Main);
-
     return 0;
 }
 
@@ -31,47 +32,19 @@ int search_column(proposition *Main, char *search) {
     return -1;
 }
 
-proposition conjunction(proposition Main, int col1, int col2, int result_col) {
+proposition operate(proposition Main, char *operation, int col1, int col2, int result_col) {
     for (int i = 1; i < Main.rows; i++) {
-        if (strcmp(Main.board[i][col1], "True") == 0 && strcmp(Main.board[i][col2], "True") == 0) {
-            strcpy(Main.board[i][result_col], "True");
-        } else {
-            strcpy(Main.board[i][result_col], "False");
+        int true1 = strcmp(Main.board[i][col1], "True") == 0;
+        int true2 = strcmp(Main.board[i][col2], "True") == 0;
+        if (strcmp(operation, "&") == 0) {
+            strcpy(Main.board[i][result_col], (true1 && true2) ? "True" : "False");
+        } else if (strcmp(operation, "|") == 0) {
+            strcpy(Main.board[i][result_col], (true1 || true2) ? "True" : "False");
+        } else if (strcmp(operation, "->") == 0) {
+            strcpy(Main.board[i][result_col], (!true1 || true2) ? "True" : "False");
         }
     }
-    return Main;
-}
-
-proposition disjunction(proposition Main, int col1, int col2, int result_col) {
-    for (int i = 1; i < Main.rows; i++) {
-        if (strcmp(Main.board[i][col1], "True") == 0 || strcmp(Main.board[i][col2], "True") == 0) {
-            strcpy(Main.board[i][result_col], "True");
-        } else {
-            strcpy(Main.board[i][result_col], "False");
-        }
-    }
-    return Main;
-}
-
-proposition implication(proposition Main, int col1, int col2, int result_col) {
-    for (int i = 1; i < Main.rows; i++) {
-        if (strcmp(Main.board[i][col1], "True") == 0 && strcmp(Main.board[i][col2], "False") == 0) {
-            strcpy(Main.board[i][result_col], "False");
-        } else {
-            strcpy(Main.board[i][result_col], "True");
-        }
-    }
-    return Main;
-}
-
-proposition negation(proposition Main, int col, int result_col) {
-    for (int i = 1; i < Main.rows; i++) {
-        if (strcmp(Main.board[i][col], "True") == 0) {
-            strcpy(Main.board[i][result_col], "False");
-        } else {
-            strcpy(Main.board[i][result_col], "True");
-        }
-    }
+    strcpy(Main.board[0][result_col], operation);
     return Main;
 }
 
@@ -119,7 +92,7 @@ void request_proposition(proposition *Main) {
     scanf("%d", &option);
 
     while (option != 0) {
-        char userProposition[50], secondProposition[50];
+        char userProposition[50], secondProposition[50], operation[3];
         int returnedColumnIndex, secondReturnedColumnIndex;
         printf("Enter the operation number: ");
         switch (option) {
@@ -130,44 +103,24 @@ void request_proposition(proposition *Main) {
 
                 if (returnedColumnIndex != -1) {
                     Main->columns++;
-                    *Main = negation(*Main, returnedColumnIndex, Main->columns - 1);
+                    strcpy(Main->board[0][Main->columns - 1], userProposition);
+                    strcat(Main->board[0][Main->columns - 1], "'");
+                    for (int i = 1; i < Main->rows; i++) {
+                        strcpy(Main->board[i][Main->columns - 1], strcmp(Main->board[i][returnedColumnIndex], "True") == 0 ? "False" : "True");
+                    }
                 } else {
                     printf("Proposition not found.\n");
                 }
                 break;
             case 2:
-                printf("Enter the first proposition: ");
-                scanf("%s", userProposition);
-                printf("Enter the second proposition: ");
-                scanf("%s", secondProposition);
-
-                returnedColumnIndex = search_column(Main, userProposition);
-                secondReturnedColumnIndex = search_column(Main, secondProposition);
-
-                if (returnedColumnIndex != -1 && secondReturnedColumnIndex != -1) {
-                    Main->columns++;
-                    *Main = conjunction(*Main, returnedColumnIndex, secondReturnedColumnIndex, Main->columns - 1);
-                } else {
-                    printf("Propositions not found.\n");
-                }
-                break;
+                strcpy(operation, "&");
+                goto common_logic;
             case 3:
-                printf("Enter the first proposition: ");
-                scanf("%s", userProposition);
-                printf("Enter the second proposition: ");
-                scanf("%s", secondProposition);
-
-                returnedColumnIndex = search_column(Main, userProposition);
-                secondReturnedColumnIndex = search_column(Main, secondProposition);
-
-                if (returnedColumnIndex != -1 && secondReturnedColumnIndex != -1) {
-                    Main->columns++;
-                    *Main = disjunction(*Main, returnedColumnIndex, secondReturnedColumnIndex, Main->columns - 1);
-                } else {
-                    printf("Propositions not found.\n");
-                }
-                break;
+                strcpy(operation, "|");
+                goto common_logic;
             case 4:
+                strcpy(operation, "->");
+            common_logic:
                 printf("Enter the first proposition: ");
                 scanf("%s", userProposition);
                 printf("Enter the second proposition: ");
@@ -178,7 +131,7 @@ void request_proposition(proposition *Main) {
 
                 if (returnedColumnIndex != -1 && secondReturnedColumnIndex != -1) {
                     Main->columns++;
-                    *Main = implication(*Main, returnedColumnIndex, secondReturnedColumnIndex, Main->columns - 1);
+                    *Main = operate(*Main, operation, returnedColumnIndex, secondReturnedColumnIndex, Main->columns - 1);
                 } else {
                     printf("Propositions not found.\n");
                 }
