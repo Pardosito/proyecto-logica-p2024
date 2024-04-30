@@ -30,6 +30,7 @@ typedef struct {
 void request_proposition(proposition *Main);
 int search_column(proposition *Main, char *search);
 proposition operate(proposition Main, char *operation, int col1, int col2, int result_col);
+void criticalRows(proposition *Main);
 
 int main(void) {
     proposition Main;
@@ -38,6 +39,7 @@ int main(void) {
     getchar();
     Main.columns = Main.num_propositions;
     request_proposition(&Main);
+    criticalRows(&Main);
     return 0;
 }
 
@@ -83,6 +85,35 @@ void printMenu(void) {
            "3 - Disjunction (|), e.g., p | q\n"
            "4 - Implication (->), e.g., p -> q\n"
            "Type '0' to finish entering your prepositions\n");
+}
+
+void criticalRows (proposition *Main){
+    char conclusion, premise;
+    int searchResult, totalPremises;
+
+    printf("Enter your conclusion: \n");
+    scanf("%s", &conclusion);
+    searchResult = search_column(Main, &conclusion);
+    if (searchResult == -1) printf("Conclusion not found");
+
+    printf("How many premises will you evaluate? \n");
+    scanf("%d",&totalPremises);
+
+    for (int i = 0; i < totalPremises; i++)
+    {
+        printf("Enter your premise: \n");
+        scanf("%s", &premise);
+        searchResult = search_column(Main, &premise);
+        if (searchResult == -1) printf("Premise not found\n");
+        strcpy(&Main->board[0][0][i], &premise);
+    }
+
+
+    
+
+
+
+
 }
 
 void request_proposition(proposition *Main) {
