@@ -9,129 +9,74 @@ Authors:
 - José Emmanuel Pulido Tinajero
 - Ian Eugenio Rodríguez Wong
 
-Current delivery: Part II  ofT III
+Current delivery: Part II  of III
+Times cried during the making of this project: 2 -> 1 due to relief, 1 due to stress
+Segmentation Faults scarred us for life.
+Choosing to do this project in C was a mistake. A big one.
+We just want this to end.
 */
+
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-typedef struct
-{
+
+typedef struct {
     int num_propositions;
     int rows;
     int columns;
     char board[100][100][50];
 } proposition;
 
-void request_proposition(proposition Main);
+void request_proposition(proposition *Main);
+int search_column(proposition *Main, char *search);
+proposition operate(proposition Main, char *operation, int col1, int col2, int result_col);
 
-int main(void)
-{
+int main(void) {
     proposition Main;
     printf("How many propositions do you want to evaluate? ");
     scanf("%d", &Main.num_propositions);
     getchar();
     Main.columns = Main.num_propositions;
-    request_proposition(Main);
-
+    request_proposition(&Main);
     return 0;
 }
 
-int search_column(proposition Main, char *search)
-{
-    for (int i = 0; i < 100; i++)
-    {
-        //printf("Comparing with: %s\n", Main.board[0][i]);
-        if (strcmp(Main.board[0][i], search) == 0)
-        {
+int search_column(proposition *Main, char *search) {
+    for (int i = 0; i < Main->columns; i++) {
+        if (strcmp(Main->board[0][i], search) == 0) {
             return i;
         }
     }
     return -1;
 }
 
-proposition conjunction(proposition Main, int col1, int col2, int result_col)
-{
-    for (int i = 1; i < Main.rows; i++)
-    {
-        if (strcmp(Main.board[i][col1], "True") == 0 && strcmp(Main.board[i][col2], "True") == 0)
-        {
-            strcpy(Main.board[i][result_col], "True");
-        }
-        else
-        {
-            strcpy(Main.board[i][result_col], "False");
+proposition operate(proposition Main, char *operation, int col1, int col2, int result_col) {
+    char ampersan = 38;
+    for (int i = 1; i < Main.rows; i++) {
+        int true1 = strcmp(Main.board[i][col1], "True") == 0;
+        int true2 = strcmp(Main.board[i][col2], "True") == 0;
+        if (strcmp(operation, "&") == 0) {
+            strcpy(Main.board[i][result_col], (true1 && true2) ? "True" : "False");
+        } else if (strcmp(operation, "|") == 0) {
+            strcpy(Main.board[i][result_col], (true1 || true2) ? "True" : "False");
+        } else if (strcmp(operation, "->") == 0) {
+            strcpy(Main.board[i][result_col], (!true1 || true2) ? "True" : "False");
         }
     }
+    strcpy(Main.board[0][result_col], operation);
     return Main;
 }
 
-proposition disjunction(proposition Main, int col1, int col2, int result_col)
-{
-    for (int i = 1; i < Main.rows; i++)
-    {
-        if (strcmp(Main.board[i][col1], "True") == 0 || strcmp(Main.board[i][col2], "True") == 0)
-        {
-            strcpy(Main.board[i][result_col], "True");
+void print_table(proposition *Main) {
+    for (int i_row = 0; i_row < Main->rows; i_row++) {
+        for (int i_column = 0; i_column < Main->columns; i_column++) {
+            printf("|%-11s", Main->board[i_row][i_column]);
         }
-        else
-        {
-            strcpy(Main.board[i][result_col], "False");
-        }
-    }
-    return Main;
-}
-
-proposition implication(proposition Main, int col1, int col2, int result_col)
-{
-    for (int i = 1; i < Main.rows; i++)
-    {
-        if (strcmp(Main.board[i][col1], "True") == 0 && strcmp(Main.board[i][col2], "False") == 0)
-        {
-            strcpy(Main.board[i][result_col], "False");
-        }
-        else
-        {
-            strcpy(Main.board[i][result_col], "True");
-        }
-    }
-    return Main;
-}
-
-proposition negation(proposition Main, int col, int result_col)
-{
-    for (int i = 0; i < Main.rows; i++)
-    {
-        if (i == 0)
-        {
-            // strcpy(Main.board[i][col],"");
-        }
-        else if (strcmp(Main.board[i][col], "True") == 0)
-        {
-            strcpy(Main.board[i][result_col], "False");
-        }
-        else
-        {
-            strcpy(Main.board[i][result_col], "True");
-        }
-    }
-
-    return Main;
-}
-
-void print_table(proposition Main)
-{
-    for (int i_row = 0; i_row < Main.rows; i_row++)
-    {
-        for (int i_column = 0; i_column < Main.columns; i_column++)
-        {
-            printf("|%-11s", Main.board[i_row][i_column]);
-        }
-        printf("\n");
+        printf("|\n");
     }
 }
 
-void printMenu (void)
-{
+void printMenu(void) {
     printf("Enter logical operations using the following symbols:\n"
            "1 - Negation (~), e.g., ~q\n"
            "2 - Conjunction (&), e.g., p & q\n"
@@ -140,138 +85,114 @@ void printMenu (void)
            "Type '0' to finish entering your prepositions\n");
 }
 
-void request_proposition(proposition Main)
-{
+void request_proposition(proposition *Main) {
+    char temp[100];
     int option;
-    Main.rows = pow(2, Main.num_propositions) + 1;
+    Main->rows = pow(2, Main->num_propositions) + 1;
 
-    for (int x = 0; x < Main.num_propositions; x++)
-    {
+    for (int x = 0; x < Main->num_propositions; x++) {
         printf("Enter the proposition %d: ", x);
-        scanf("%c", &Main.board[0][x][0]);
-        getchar();
-        fflush(stdin);
+        scanf(" %s", temp);
+        strcpy(Main->board[0][x], temp);
     }
 
-    for (int x = 1; x < Main.rows; x++)
-    {
-        for (int y = 0; y < Main.num_propositions; y++)
-        {
-            if ((((x - 1) >> (Main.num_propositions - y - 1)) & 1) == 0) // Bitwise operation AND with number 1 to print the values of the propositions
-            {
-                strcpy(Main.board[x][y], "True");
-            }
-            else
-            {
-                strcpy(Main.board[x][y], "False");
+    for (int x = 1; x < Main->rows; x++) {
+        for (int y = 0; y < Main->num_propositions; y++) {
+            if ((((x - 1) >> (Main->num_propositions - y - 1)) & 1) == 0) {
+                strcpy(Main->board[x][y], "True");
+            } else {
+                strcpy(Main->board[x][y], "False");
             }
         }
     }
-    printf("\n");
-    print_table(Main);
-    printf("\n");
 
+    print_table(Main);
     printMenu();
     scanf("%d", &option);
 
-    while (option != 0)
-    {
-        char userProposition[2], secondProposition[2];
-        int returnedColumnIndex, secondReturnedColumnIndex;
-        switch (option)
-        {
+    while (option != 0) {
+        char userProposition[50], secondProposition[50], operation[10];
+        int returnedColumnIndex, secondReturnedColumnIndex, flag;
+        switch (option) {
+            case 1:
+                printf("Which proposition would you like to negate? ");
+                scanf("%s", userProposition);
+                returnedColumnIndex = search_column(Main, userProposition);
 
-        case 1:
-            printf("Which proposition would you like to negate? ");
-            fflush(stdin);
-            fgets(userProposition, 2, stdin);
-            returnedColumnIndex = search_column(Main, userProposition);
+                if (returnedColumnIndex != -1) {
+                    Main->columns++;
+                    strcpy(Main->board[0][Main->columns - 1], userProposition);
+                    strcat(Main->board[0][Main->columns - 1], "'");
+                    for (int i = 1; i < Main->rows; i++) {
+                        strcpy(Main->board[i][Main->columns - 1], strcmp(Main->board[i][returnedColumnIndex], "True") == 0 ? "False" : "True");
+                    }
+                } else {
+                    printf("Proposition not found.\n");
+                }
+                break;
+            case 2:
+                printf("Enter the first proposition: ");
+                scanf("%s", userProposition);
 
-            if (returnedColumnIndex != -1)
-            {
-                Main = negation(Main, returnedColumnIndex, Main.columns);
-                Main.columns += 1;
-            }
-            else
-            {
-                printf("Proposition not found.\n");
-            }
-            break;
+                printf("Enter the second proposition: ");
+                scanf("%s", secondProposition);
+                strcpy(operation, "&");
+                flag = 2;
+                goto common_logic;
+            case 3:
+                printf("Enter the first proposition: ");
+                scanf("%s", userProposition);
 
-        case 2:
-            fflush(stdin);
-            printf("Enter the first proposition: ");
-            fgets(userProposition, 2, stdin);
-            returnedColumnIndex = search_column(Main, userProposition);
+                printf("Enter the second proposition: ");
+                scanf("%s", secondProposition);
+                strcpy(operation, "|");
+                flag = 3;
+                goto common_logic;
+            case 4:
+                printf("Enter the first proposition: ");
+                scanf("%s", userProposition);
 
-            fflush(stdin);
-            printf("Enter the second proposition: ");
-            fgets(secondProposition, 2, stdin);
-            secondReturnedColumnIndex = search_column(Main, secondProposition);
+                printf("Enter the second proposition: ");
+                scanf("%s", secondProposition);
+                strcpy(operation, "->");
+                flag = 4;
+                goto common_logic;
 
-            if (returnedColumnIndex != -1 && secondReturnedColumnIndex != -1)
-            {
-                Main = conjunction(Main, returnedColumnIndex, secondReturnedColumnIndex, Main.columns);
-                Main.columns += 1;
-            }
-            else
-            {
-                printf("Propositions not found.\n");
-            }
-            break;
+            common_logic:
 
-        case 3:
-            fflush(stdin);
-            printf("Enter the first proposition: ");
-            fgets(userProposition, 2, stdin);
-            returnedColumnIndex = search_column(Main, userProposition);
+                returnedColumnIndex = search_column(Main, userProposition);
+                secondReturnedColumnIndex = search_column(Main, secondProposition);
 
-            fflush(stdin);
-            printf("Enter the second proposition: ");
-            fgets(secondProposition, 2, stdin);
-            secondReturnedColumnIndex = search_column(Main, secondProposition);
+                if (returnedColumnIndex != -1 && secondReturnedColumnIndex != -1) {
+                    Main->columns++;
+                    *Main = operate(*Main, operation, returnedColumnIndex, secondReturnedColumnIndex, Main->columns - 1);
 
-            if (returnedColumnIndex != -1 && secondReturnedColumnIndex != -1)
-            {
-                Main = disjunction(Main, returnedColumnIndex, secondReturnedColumnIndex, Main.columns);
-                Main.columns += 1;
-            }
-            else
-            {
-                printf("Propositions not found.\n");
-            }
-            break;
+                    if (flag == 2)
+                    {
+                        strcpy(Main->board[0][Main->columns-1], userProposition);
+                        strcat(Main->board[0][Main->columns-1],"&");
+                        strcat(Main->board[0][Main->columns-1], secondProposition);
+                    }
+                    else if (flag == 3)
+                    {
+                        strcpy(Main->board[0][Main->columns-1], userProposition);
+                        strcat(Main->board[0][Main->columns-1],"|");
+                        strcat(Main->board[0][Main->columns-1], secondProposition);
+                    }
+                    else if (flag == 4)
+                    {
+                        strcpy(Main->board[0][Main->columns-1], userProposition);
+                        strcat(Main->board[0][Main->columns-1],"->");
+                        strcat(Main->board[0][Main->columns-1], secondProposition);
+                    }
 
-        case 4:
-            fflush(stdin);
-            printf("Enter the first proposition: ");
-            fgets(userProposition, 2, stdin);
-            fgets(userProposition, 2, stdin);
-            returnedColumnIndex = search_column(Main, userProposition);
-
-            fflush(stdin);
-            printf("Enter the second proposition: ");
-            fgets(secondProposition, 2, stdin);
-            fgets(secondProposition, 2, stdin);
-            secondReturnedColumnIndex = search_column(Main, secondProposition);
-
-            if (returnedColumnIndex != -1 && secondReturnedColumnIndex != -1)
-            {
-                Main = implication(Main, returnedColumnIndex, secondReturnedColumnIndex, Main.columns);
-                Main.columns += 1;
-            }
-            else
-            {
-                printf("Propositions not found.\n");
-            }
-            break;
-
-        default:
-            break;
+                } else {
+                    printf("Propositions not found.\n");
+                }
+                break;
         }
 
         print_table(Main);
-        printf("\n");
         printMenu();
         scanf("%d", &option);
     }
