@@ -40,6 +40,7 @@ int main(void) {
     Main.columns = Main.num_propositions;
     request_proposition(&Main);
     criticalRows(&Main);
+    printf("%c",Main.board[0][0][0]);
     return 0;
 }
 
@@ -88,12 +89,12 @@ void printMenu(void) {
 }
 
 void criticalRows (proposition *Main){
-    char conclusion, premise;
+    char conclusion[50], premise[50];
     int searchResult, totalPremises;
 
     printf("Enter your conclusion: \n");
-    scanf("%s", &conclusion);
-    searchResult = search_column(Main, &conclusion);
+    scanf("%s", conclusion);
+    searchResult = search_column(Main, conclusion);
     if (searchResult == -1) printf("Conclusion not found");
 
     printf("How many premises will you evaluate? \n");
@@ -102,13 +103,16 @@ void criticalRows (proposition *Main){
     for (int i = 0; i < totalPremises; i++)
     {
         printf("Enter your premise: \n");
-        scanf("%s", &premise);
-        searchResult = search_column(Main, &premise);
-        if (searchResult == -1) printf("Premise not found\n");
-        strcpy(&Main->board[0][0][i], &premise);
+        scanf("%s", premise);
+        searchResult = search_column(Main, premise);
+        if (searchResult == -1)
+        {
+            printf("Premise not found\n");
+        }
+        strcpy(&Main->board[0][0][i], premise);
     }
 
-
+    print_table(Main);
     
 
 
