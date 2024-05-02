@@ -9,11 +9,8 @@ Authors:
 - José Emmanuel Pulido Tinajero
 - Ian Eugenio Rodríguez Wong
 
-Current delivery: Part II  of III
-Times cried during the making of this project: 2 -> 1 due to relief, 1 due to stress
-Segmentation Faults scarred us for life.
-Choosing to do this project in C was a mistake. A big one.
-We just want this to end.
+Current delivery: Part III  of III
+Just never again pls
 */
 
 #include <stdio.h>
@@ -40,7 +37,6 @@ int main(void) {
     Main.columns = Main.num_propositions;
     request_proposition(&Main);
     criticalRows(&Main);
-    printf("%c",Main.board[0][0][0]);
     return 0;
 }
 
@@ -89,34 +85,34 @@ void printMenu(void) {
 }
 
 void criticalRows (proposition *Main){
-    char conclusion[50], premise[50];
-    int searchResult, totalPremises;
+    int total = (Main->columns) - (Main->num_propositions);
+    int count;
 
-    printf("Enter your conclusion: \n");
-    scanf("%s", conclusion);
-    searchResult = search_column(Main, conclusion);
-    if (searchResult == -1) printf("Conclusion not found");
-
-    printf("How many premises will you evaluate? \n");
-    scanf("%d",&totalPremises);
-
-    for (int i = 0; i < totalPremises; i++)
+    for (int i = 1; i < Main->rows; i++)
     {
-        printf("Enter your premise: \n");
-        scanf("%s", premise);
-        searchResult = search_column(Main, premise);
-        if (searchResult == -1)
+        for (int j = Main->num_propositions; j < Main->columns ; j++)
         {
-            printf("Premise not found\n");
+            if ((strcmp(Main->board[i][j], "True")) == 0 && (strcmp(Main->board[i][j], "True") == 0))
+            {
+                if (strcmp(Main->board[i][Main->columns], "True") == 0)
+                {
+                    count++;
+                }
+            }
         }
-        strcpy(&Main->board[0][0][i], premise);
+        
     }
 
-    print_table(Main);
+    if (total == count)
+    {
+        printf("El argumento es válido.");
+    }
+    else
+    {
+        printf("El argumento no es válido");
+    }
+
     
-
-
-
 
 }
 
@@ -230,5 +226,19 @@ void request_proposition(proposition *Main) {
         print_table(Main);
         printMenu();
         scanf("%d", &option);
+        if (option == 0)
+        {
+            char exit;
+            printf("This will make the last premise your conclusion. Are you sure? y/n\n");
+            fflush(stdin);
+            scanf("%c",&exit);
+            if (exit == 'y') continue;
+            else
+            {
+                printMenu();
+                scanf("%d", &option);
+            }
+        }
+
     }
 }
