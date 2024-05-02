@@ -83,34 +83,24 @@ void printMenu(void) {
            "4 - Implication (->), e.g., p -> q\n"
            "Type '0' to finish entering your prepositions\n");
 }
-
 void criticalRows (proposition *Main){
-    int total = (Main->columns) - (Main->num_propositions);
-    int count = 0;
-
-    for (int i = 1; i < Main->rows; i++)
+for(int x = 1; x = Main->rows;  x++)
+{
+    short value = 1;
+    int y;
+    for(y = Main->num_propositions; y < Main->columns; y++)
     {
-        for (int j = Main->num_propositions; j < Main->columns ; j++)
-        {
-            if ((strcmp(Main->board[i][j], "True")) == 0 && (strcmp(Main->board[i][j+1], "True") == 0))
-            {
-                if (strcmp(Main->board[i][Main->columns], "True") == 0)
-                {
-                    count++;
-                }
-            }
+        if(strcmp(Main->board[x][y], "True") != 0)
+                   {
+            value = 0;
+            break;
         }
-        
     }
-
-    if (total == count)
+    if(value == 1)
     {
-        printf("El argumento es válido.");
+        printf("valid argument, critical row = %d", y);
     }
-    else
-    {
-        printf("El argumento no es válido");
-    }
+}
 }
 
 void request_proposition(proposition *Main) {
