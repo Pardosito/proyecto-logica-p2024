@@ -86,13 +86,13 @@ void printMenu(void) {
 
 void criticalRows (proposition *Main){
     int total = (Main->columns) - (Main->num_propositions);
-    int count;
+    int count = 0;
 
     for (int i = 1; i < Main->rows; i++)
     {
         for (int j = Main->num_propositions; j < Main->columns ; j++)
         {
-            if ((strcmp(Main->board[i][j], "True")) == 0 && (strcmp(Main->board[i][j], "True") == 0))
+            if ((strcmp(Main->board[i][j], "True")) == 0 && (strcmp(Main->board[i][j+1], "True") == 0))
             {
                 if (strcmp(Main->board[i][Main->columns], "True") == 0)
                 {
@@ -111,9 +111,6 @@ void criticalRows (proposition *Main){
     {
         printf("El argumento no es válido");
     }
-
-    
-
 }
 
 void request_proposition(proposition *Main) {
