@@ -110,7 +110,7 @@ void printMenu(void)
 //Function in charge of analizing whether the entire argument is valid or not
 void criticalRows(proposition *Main)
 {
-    short counter, totalCRows;
+    short value = 1;
     int returnedColumnIndex;
     char premise[50];
 
@@ -121,35 +121,30 @@ void criticalRows(proposition *Main)
 
     for (int x = 1; x < Main->rows; x++)
     {
-        for (int y = returnedColumnIndex; y < Main->columns; y++)
+        for (int y = returnedColumnIndex; y <= Main->columns-1; y++)
         {
             if (strcmp(Main->board[x][y], "True") != 0)
             {
                 break;
             }
-            else
-            {
-                if (strcmp(Main->board[x][Main->columns], "True") == 0)
-                {
-                counter++;
-                totalCRows++;
-                }
-                else
-                {
-                    counter++;
-                }
-            }
+        }
+        if (strcmp(Main->board[x][Main->columns], "True") != 0)
+        {
+            value = 0;
+            break;
         }
     }
 
-    if (counter == totalCRows)
+    if (value == 1)
     {
         printf("Valid argument.");
     }
     else
     {
-        printf("Argument NOT valid.");
+        printf("Argumen NOT valid.");
     }
+
+
 }
 
 /*
