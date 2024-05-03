@@ -23,7 +23,7 @@ typedef struct {
     int columns;
     char board[100][100][50];
 } proposition;
-
+//comentario prueba
 void request_proposition(proposition *Main);
 int search_column(proposition *Main, char *search);
 proposition operate(proposition Main, char *operation, int col1, int col2, int result_col);
