@@ -9,7 +9,9 @@ Authors:
 - José Emmanuel Pulido Tinajero
 - Ian Eugenio Rodríguez Wong
 
-Current delivery: Part III  of III
+Special thanks to Erick Eduardo Rodríguez Gómez
+
+Current delivery: Part III of III
 Just never again pls
 */
 
@@ -17,7 +19,8 @@ Just never again pls
 #include <string.h>
 #include <math.h>
 
-typedef struct {
+typedef struct
+{
     int num_propositions;
     int rows;
     int columns;
@@ -29,7 +32,8 @@ int search_column(proposition *Main, char *search);
 proposition operate(proposition Main, char *operation, int col1, int col2, int result_col);
 void criticalRows(proposition *Main);
 
-int main(void) {
+int main(void)
+{
     proposition Main;
     printf("How many propositions do you want to evaluate? ");
     scanf("%d", &Main.num_propositions);
@@ -40,25 +44,35 @@ int main(void) {
     return 0;
 }
 
-int search_column(proposition *Main, char *search) {
-    for (int i = 0; i < Main->columns; i++) {
-        if (strcmp(Main->board[0][i], search) == 0) {
+int search_column(proposition *Main, char *search)
+{
+    for (int i = 0; i < Main->columns; i++)
+    {
+        if (strcmp(Main->board[0][i], search) == 0)
+        {
             return i;
         }
     }
     return -1;
 }
 
-proposition operate(proposition Main, char *operation, int col1, int col2, int result_col) {
+proposition operate(proposition Main, char *operation, int col1, int col2, int result_col)
+{
     char ampersan = 38;
-    for (int i = 1; i < Main.rows; i++) {
+    for (int i = 1; i < Main.rows; i++)
+    {
         int true1 = strcmp(Main.board[i][col1], "True") == 0;
         int true2 = strcmp(Main.board[i][col2], "True") == 0;
-        if (strcmp(operation, "&") == 0) {
+        if (strcmp(operation, "&") == 0)
+        {
             strcpy(Main.board[i][result_col], (true1 && true2) ? "True" : "False");
-        } else if (strcmp(operation, "|") == 0) {
+        }
+        else if (strcmp(operation, "|") == 0)
+        {
             strcpy(Main.board[i][result_col], (true1 || true2) ? "True" : "False");
-        } else if (strcmp(operation, "->") == 0) {
+        }
+        else if (strcmp(operation, "->") == 0)
+        {
             strcpy(Main.board[i][result_col], (!true1 || true2) ? "True" : "False");
         }
     }
@@ -66,59 +80,85 @@ proposition operate(proposition Main, char *operation, int col1, int col2, int r
     return Main;
 }
 
-void print_table(proposition *Main) {
-    for (int i_row = 0; i_row < Main->rows; i_row++) {
-        for (int i_column = 0; i_column < Main->columns; i_column++) {
+void print_table(proposition *Main)
+{
+    for (int i_row = 0; i_row < Main->rows; i_row++)
+    {
+        for (int i_column = 0; i_column < Main->columns; i_column++)
+        {
             printf("|%-11s", Main->board[i_row][i_column]);
         }
         printf("|\n");
     }
 }
 
-void printMenu(void) {
-    printf("Enter logical operations using the following symbols:\n"
-           "1 - Negation (~), e.g., ~q\n"
+void printMenu(void)
+{
+    printf("Enter logical operations using the following numbers:\n"
+           "1 - Negation, e.g., q'\n"
            "2 - Conjunction (&), e.g., p & q\n"
            "3 - Disjunction (|), e.g., p | q\n"
-           "4 - Implication (->), e.g., p -> q\n"
+           "4 - Copy proposition\n"
+           "5 - Implication (->), e.g., p -> q\n"
            "Type '0' to finish entering your prepositions\n");
 }
-void criticalRows (proposition *Main){
-for(int x = 1; x = Main->rows;  x++)
+void criticalRows(proposition *Main)
 {
     short value = 1;
-    int y;
-    for(y = Main->num_propositions; y < Main->columns; y++)
+    int returnedColumnIndex;
+    char premise[50];
+
+    printf("Enter the beginning of your premises: ");
+    scanf("%s", premise);
+    returnedColumnIndex = search_column(Main, premise);
+    if (returnedColumnIndex == -1) printf("Premise not found.\n");
+
+    for (int x = 1; x < Main->rows; x++)
     {
-        if(strcmp(Main->board[x][y], "True") != 0)
-                   {
-            value = 0;
-            break;
+        for (int y = returnedColumnIndex; y < Main->columns; y++)
+        {
+            if (strcmp(Main->board[x][y], "True") != 0)
+            {
+                value = 0;
+                break;
+            }
+            else continue;
         }
     }
-    if(value == 1)
+
+    if (value == 1)
     {
-        printf("valid argument, critical row = %d", y);
+        printf("Valid argument.");
+    }
+    else
+    {
+        printf("Argument NOT valid.");
     }
 }
-}
 
-void request_proposition(proposition *Main) {
+void request_proposition(proposition *Main)
+{
     char temp[100];
     int option;
     Main->rows = pow(2, Main->num_propositions) + 1;
 
-    for (int x = 0; x < Main->num_propositions; x++) {
+    for (int x = 0; x < Main->num_propositions; x++)
+    {
         printf("Enter the proposition %d: ", x);
         scanf(" %s", temp);
         strcpy(Main->board[0][x], temp);
     }
 
-    for (int x = 1; x < Main->rows; x++) {
-        for (int y = 0; y < Main->num_propositions; y++) {
-            if ((((x - 1) >> (Main->num_propositions - y - 1)) & 1) == 0) {
+    for (int x = 1; x < Main->rows; x++)
+    {
+        for (int y = 0; y < Main->num_propositions; y++)
+        {
+            if ((((x - 1) >> (Main->num_propositions - y - 1)) & 1) == 0)
+            {
                 strcpy(Main->board[x][y], "True");
-            } else {
+            }
+            else
+            {
                 strcpy(Main->board[x][y], "False");
             }
         }
@@ -128,86 +168,114 @@ void request_proposition(proposition *Main) {
     printMenu();
     scanf("%d", &option);
 
-    while (option != 0) {
+    while (option != 0)
+    {
         char userProposition[50], secondProposition[50], operation[10];
         int returnedColumnIndex, secondReturnedColumnIndex, flag;
-        switch (option) {
-            case 1:
-                printf("Which proposition would you like to negate? ");
-                scanf("%s", userProposition);
-                returnedColumnIndex = search_column(Main, userProposition);
+        switch (option)
+        {
+        case 1:
+            printf("Which proposition would you like to negate? ");
+            scanf("%s", userProposition);
+            returnedColumnIndex = search_column(Main, userProposition);
 
-                if (returnedColumnIndex != -1) {
-                    Main->columns++;
+            if (returnedColumnIndex != -1)
+            {
+                Main->columns++;
+                strcpy(Main->board[0][Main->columns - 1], userProposition);
+                strcat(Main->board[0][Main->columns - 1], "'");
+                for (int i = 1; i < Main->rows; i++)
+                {
+                    strcpy(Main->board[i][Main->columns - 1], strcmp(Main->board[i][returnedColumnIndex], "True") == 0 ? "False" : "True");
+                }
+            }
+            else
+            {
+                printf("Proposition not found.\n");
+            }
+            break;
+        case 2:
+            printf("Enter the first proposition: ");
+            scanf("%s", userProposition);
+
+            printf("Enter the second proposition: ");
+            scanf("%s", secondProposition);
+            strcpy(operation, "&");
+            flag = 2;
+            goto common_logic;
+        case 3:
+            printf("Enter the first proposition: ");
+            scanf("%s", userProposition);
+
+            printf("Enter the second proposition: ");
+            scanf("%s", secondProposition);
+            strcpy(operation, "|");
+            flag = 3;
+            goto common_logic;
+        case 4:
+            printf("Enter proposition: ");
+            scanf("%s", userProposition);
+            returnedColumnIndex = search_column(Main, userProposition);
+
+            if (returnedColumnIndex != -1)
+            {
+                Main->columns++;
+                strcpy(Main->board[0][Main->columns - 1], userProposition);
+                for (int i = 1; i < Main->rows; i++)
+                {
+                    strcpy(Main->board[i][Main->columns - 1], Main->board[i][returnedColumnIndex]);
+                }
+            }
+            else
+            {
+                printf("Proposition not found.\n");
+            }
+            break;
+
+        case 5:
+            printf("Enter the first proposition: ");
+            scanf("%s", userProposition);
+
+            printf("Enter the second proposition: ");
+            scanf("%s", secondProposition);
+            strcpy(operation, "->");
+            flag = 4;
+            goto common_logic;
+
+        common_logic:
+
+            returnedColumnIndex = search_column(Main, userProposition);
+            secondReturnedColumnIndex = search_column(Main, secondProposition);
+
+            if (returnedColumnIndex != -1 && secondReturnedColumnIndex != -1)
+            {
+                Main->columns++;
+                *Main = operate(*Main, operation, returnedColumnIndex, secondReturnedColumnIndex, Main->columns - 1);
+
+                if (flag == 2)
+                {
                     strcpy(Main->board[0][Main->columns - 1], userProposition);
-                    strcat(Main->board[0][Main->columns - 1], "'");
-                    for (int i = 1; i < Main->rows; i++) {
-                        strcpy(Main->board[i][Main->columns - 1], strcmp(Main->board[i][returnedColumnIndex], "True") == 0 ? "False" : "True");
-                    }
-                } else {
-                    printf("Proposition not found.\n");
+                    strcat(Main->board[0][Main->columns - 1], "&");
+                    strcat(Main->board[0][Main->columns - 1], secondProposition);
                 }
-                break;
-            case 2:
-                printf("Enter the first proposition: ");
-                scanf("%s", userProposition);
-
-                printf("Enter the second proposition: ");
-                scanf("%s", secondProposition);
-                strcpy(operation, "&");
-                flag = 2;
-                goto common_logic;
-            case 3:
-                printf("Enter the first proposition: ");
-                scanf("%s", userProposition);
-
-                printf("Enter the second proposition: ");
-                scanf("%s", secondProposition);
-                strcpy(operation, "|");
-                flag = 3;
-                goto common_logic;
-            case 4:
-                printf("Enter the first proposition: ");
-                scanf("%s", userProposition);
-
-                printf("Enter the second proposition: ");
-                scanf("%s", secondProposition);
-                strcpy(operation, "->");
-                flag = 4;
-                goto common_logic;
-
-            common_logic:
-
-                returnedColumnIndex = search_column(Main, userProposition);
-                secondReturnedColumnIndex = search_column(Main, secondProposition);
-
-                if (returnedColumnIndex != -1 && secondReturnedColumnIndex != -1) {
-                    Main->columns++;
-                    *Main = operate(*Main, operation, returnedColumnIndex, secondReturnedColumnIndex, Main->columns - 1);
-
-                    if (flag == 2)
-                    {
-                        strcpy(Main->board[0][Main->columns-1], userProposition);
-                        strcat(Main->board[0][Main->columns-1],"&");
-                        strcat(Main->board[0][Main->columns-1], secondProposition);
-                    }
-                    else if (flag == 3)
-                    {
-                        strcpy(Main->board[0][Main->columns-1], userProposition);
-                        strcat(Main->board[0][Main->columns-1],"|");
-                        strcat(Main->board[0][Main->columns-1], secondProposition);
-                    }
-                    else if (flag == 4)
-                    {
-                        strcpy(Main->board[0][Main->columns-1], userProposition);
-                        strcat(Main->board[0][Main->columns-1],"->");
-                        strcat(Main->board[0][Main->columns-1], secondProposition);
-                    }
-
-                } else {
-                    printf("Propositions not found.\n");
+                else if (flag == 3)
+                {
+                    strcpy(Main->board[0][Main->columns - 1], userProposition);
+                    strcat(Main->board[0][Main->columns - 1], "|");
+                    strcat(Main->board[0][Main->columns - 1], secondProposition);
                 }
-                break;
+                else if (flag == 4)
+                {
+                    strcpy(Main->board[0][Main->columns - 1], userProposition);
+                    strcat(Main->board[0][Main->columns - 1], "->");
+                    strcat(Main->board[0][Main->columns - 1], secondProposition);
+                }
+            }
+            else
+            {
+                printf("Propositions not found.\n");
+            }
+            break;
         }
 
         print_table(Main);
@@ -218,14 +286,14 @@ void request_proposition(proposition *Main) {
             char exit;
             printf("This will make the last premise your conclusion. Are you sure? y/n\n");
             fflush(stdin);
-            scanf("%c",&exit);
-            if (exit == 'y') continue;
+            scanf("%c", &exit);
+            if (exit == 'y')
+                continue;
             else
             {
                 printMenu();
                 scanf("%d", &option);
             }
         }
-
     }
 }
