@@ -25,7 +25,7 @@ typedef struct
     int rows;
     int columns;
     char board[100][100][50];
-} proposition;
+} proposition; //Creating the structure that will serve as our table for the program
 
 void request_proposition(proposition *Main);
 int search_column(proposition *Main, char *search);
@@ -38,12 +38,13 @@ int main(void)
     printf("How many propositions do you want to evaluate? ");
     scanf("%d", &Main.num_propositions);
     getchar();
-    Main.columns = Main.num_propositions;
+    Main.columns = Main.num_propositions; //Equalizing the columns to the number of propositions for Main.columns to be updated throught the program
     request_proposition(&Main);
     criticalRows(&Main);
     return 0;
 }
 
+//Function in charge of searching for the index of a column given the memory address of the proposition as a parameter
 int search_column(proposition *Main, char *search)
 {
     for (int i = 0; i < Main->columns; i++)
@@ -56,6 +57,7 @@ int search_column(proposition *Main, char *search)
     return -1;
 }
 
+//Function in charge of asigning a "true" or "false" value to each "cell" according to the operation given as a parameter
 proposition operate(proposition Main, char *operation, int col1, int col2, int result_col)
 {
     char ampersan = 38;
@@ -80,6 +82,7 @@ proposition operate(proposition Main, char *operation, int col1, int col2, int r
     return Main;
 }
 
+//Function in charge of printing the formatted table
 void print_table(proposition *Main)
 {
     for (int i_row = 0; i_row < Main->rows; i_row++)
@@ -92,6 +95,7 @@ void print_table(proposition *Main)
     }
 }
 
+//Function that prints the menu the user sees
 void printMenu(void)
 {
     printf("Enter logical operations using the following numbers:\n"
@@ -102,9 +106,11 @@ void printMenu(void)
            "5 - Implication (->), e.g., p -> q\n"
            "Type '0' to finish entering your prepositions\n");
 }
+
+//Function in charge of analizing whether the entire argument is valid or not
 void criticalRows(proposition *Main)
 {
-    short value = 1;
+    short counter, totalCRows;
     int returnedColumnIndex;
     char premise[50];
 
@@ -119,14 +125,24 @@ void criticalRows(proposition *Main)
         {
             if (strcmp(Main->board[x][y], "True") != 0)
             {
-                value = 0;
                 break;
             }
-            else continue;
+            else
+            {
+                if (strcmp(Main->board[x][Main->columns], "True") == 0)
+                {
+                counter++;
+                totalCRows++;
+                }
+                else
+                {
+                    counter++;
+                }
+            }
         }
     }
 
-    if (value == 1)
+    if (counter == totalCRows)
     {
         printf("Valid argument.");
     }
@@ -136,6 +152,10 @@ void criticalRows(proposition *Main)
     }
 }
 
+/*
+In general, a mess of a function. Its original purpose was to recieve the propositions from the user,
+now it morphed into this abomination.
+*/
 void request_proposition(proposition *Main)
 {
     char temp[100];
@@ -146,21 +166,21 @@ void request_proposition(proposition *Main)
     {
         printf("Enter the proposition %d: ", x);
         scanf(" %s", temp);
-        strcpy(Main->board[0][x], temp);
+        strcpy(Main->board[0][x], temp); //Puts the proposition as a header
     }
 
     for (int x = 1; x < Main->rows; x++)
     {
         for (int y = 0; y < Main->num_propositions; y++)
         {
-            if ((((x - 1) >> (Main->num_propositions - y - 1)) & 1) == 0)
+            if ((((x - 1) >> (Main->num_propositions - y - 1)) & 1) == 0) //Bitwise operation to determine the values of true or false of the initial propositions
             {
                 strcpy(Main->board[x][y], "True");
             }
             else
             {
                 strcpy(Main->board[x][y], "False");
-            }
+            }   
         }
     }
 
