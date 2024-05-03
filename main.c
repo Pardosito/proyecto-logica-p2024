@@ -1,20 +1,5 @@
 /*
-Project: Truth table generatorol
-
-
-Share sound
-
-
-Diseño
-
-
-Anotar
-
-
-3
-Gente
-
-Dejar de 
+Project: Truth table generator
 Subject: Logic and Discrete Structures
 Professor: Miguel Ángel Ojeda Orozco
 Period: Spring 2024
@@ -53,7 +38,7 @@ int main(void)
     printf("How many propositions do you want to evaluate? ");
     scanf("%d", &Main.num_propositions);
     getchar();
-    Main.columns = Main.num_propositions; //Equalizing the columns to the number of propositions for Main.columns to be updated throught the program
+    Main.columns = Main.num_propositions; //Equalizing the columns to the number of propositions for Main.columns to be updated throughout the program
     request_proposition(&Main);
     criticalRows(&Main);
     return 0;
@@ -75,7 +60,6 @@ int search_column(proposition *Main, char *search)
 //Function in charge of asigning a "true" or "false" value to each "cell" according to the operation given as a parameter
 proposition operate(proposition Main, char *operation, int col1, int col2, int result_col)
 {
-    char ampersan = 38;
     for (int i = 1; i < Main.rows; i++)
     {
         int true1 = strcmp(Main.board[i][col1], "True") == 0;
@@ -128,7 +112,6 @@ void criticalRows(proposition *Main)
     short value = 1;
     int returnedColumnIndex, TrueCriticalRows = 0, FalseCriticalRows = 0;
     char premise[50];
-
 
     printf("Enter the beginning of your premises: ");
     scanf("%s", premise);
