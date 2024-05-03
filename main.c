@@ -146,10 +146,6 @@ void criticalRows(proposition *Main)
             {
                 counter2++;
             }
-            else
-            {
-                break;
-            }
         }
 
         int variable = strcmp(Main->board[x][y+1], "True");
