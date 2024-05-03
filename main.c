@@ -121,18 +121,25 @@ void criticalRows(proposition *Main)
 
     for (int x = 1; x < Main->rows; x++)
     {
-        for (int y = returnedColumnIndex; y <= Main->columns-1; y++)
+        for (int y = returnedColumnIndex; y < Main->columns; y++)
         {
             if (strcmp(Main->board[x][y], "True") != 0)
             {
                 break;
             }
         }
-        if (strcmp(Main->board[x][Main->columns], "True") != 0)
+
+        int conclusionValue = strcmp(Main->board[x][Main->columns], "True");
+
+        if (conclusionValue != 0)
         {
             value = 0;
-            break;
         }
+        else if (conclusionValue == 0)
+        {
+            value = 1;
+        }
+
     }
 
     if (value == 1)
@@ -141,10 +148,8 @@ void criticalRows(proposition *Main)
     }
     else
     {
-        printf("Argumen NOT valid.");
+        printf("Argument NOT valid.");
     }
-
-
 }
 
 /*
