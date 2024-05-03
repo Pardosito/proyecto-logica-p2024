@@ -135,11 +135,11 @@ void criticalRows(proposition *Main)
     returnedColumnIndex = search_column(Main, premise);
     if (returnedColumnIndex == -1) printf("Premise not found.\n");
 
-    for (int x = 1; x < Main->rows; x++)
+    for (int x = 1; x <= Main->rows; x++)
     {
         int counter1 = 0, counter2 = 0, y, preConclusionColumn=Main->columns-2;
 
-        for (y = returnedColumnIndex; y < preConclusionColumn; y++)
+        for (y = returnedColumnIndex; y <= preConclusionColumn; y++)
         {
             counter1++;
             if (strcmp(Main->board[x][y], "True") == 0)
@@ -148,7 +148,7 @@ void criticalRows(proposition *Main)
             }
         }
 
-        int variable = strcmp(Main->board[x][y+1], "True");
+        int variable = strcmp(Main->board[x][preConclusionColumn+1], "True");
         if (counter1 == counter2 && variable == 0)
         {
             TrueCriticalRows++;
