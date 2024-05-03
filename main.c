@@ -1,5 +1,20 @@
 /*
-Project: Truth table generator
+Project: Truth table generatorol
+
+
+Share sound
+
+
+Diseño
+
+
+Anotar
+
+
+3
+Gente
+
+Dejar de 
 Subject: Logic and Discrete Structures
 Professor: Miguel Ángel Ojeda Orozco
 Period: Spring 2024
@@ -99,20 +114,21 @@ void print_table(proposition *Main)
 void printMenu(void)
 {
     printf("Enter logical operations using the following numbers:\n"
-           "1 - Negation, e.g., q'\n"
-           "2 - Conjunction (&), e.g., p & q\n"
-           "3 - Disjunction (|), e.g., p | q\n"
-           "4 - Copy proposition\n"
-           "5 - Implication (->), e.g., p -> q\n"
-           "Type '0' to finish entering your prepositions\n");
+            "1 - Negation, e.g., q'\n"
+            "2 - Conjunction (&), e.g., p & q\n"
+            "3 - Disjunction (|), e.g., p | q\n"
+            "4 - Copy proposition\n"
+            "5 - Implication (->), e.g., p -> q\n"
+            "Type '0' to finish entering your prepositions\n");
 }
 
 //Function in charge of analizing whether the entire argument is valid or not
 void criticalRows(proposition *Main)
 {
     short value = 1;
-    int returnedColumnIndex;
+    int returnedColumnIndex, TrueCriticalRows = 0, FalseCriticalRows = 0;
     char premise[50];
+
 
     printf("Enter the beginning of your premises: ");
     scanf("%s", premise);
@@ -121,30 +137,39 @@ void criticalRows(proposition *Main)
 
     for (int x = 1; x < Main->rows; x++)
     {
-        for (int y = returnedColumnIndex; y < Main->columns; y++)
+        int counter1 = 0, counter2 = 0, y, preConclusionColumn=Main->columns-2;
+
+        for (y = returnedColumnIndex; y < preConclusionColumn; y++)
         {
-            if (strcmp(Main->board[x][y], "True") != 0)
+            counter1++;
+            if (strcmp(Main->board[x][y], "True") == 0)
+            {
+                counter2++;
+            }
+            else
             {
                 break;
             }
         }
 
-        int conclusionValue = strcmp(Main->board[x][Main->columns], "True");
-
-        if (conclusionValue != 0)
+        int variable = strcmp(Main->board[x][y+1], "True");
+        if (counter1 == counter2 && variable == 0)
         {
-            value = 0;
+            TrueCriticalRows++;
         }
-        else if (conclusionValue == 0)
+        if (counter1 == counter2 && variable != 0)
         {
-            value = 1;
+            FalseCriticalRows++;
         }
-
+    }
+    
+    if (FalseCriticalRows > 0){
+        TrueCriticalRows = 0;
     }
 
-    if (value == 1)
+    if (TrueCriticalRows > 0)
     {
-        printf("Valid argument.");
+        printf("Valid argument. %d critical rows.\n", TrueCriticalRows);
     }
     else
     {
